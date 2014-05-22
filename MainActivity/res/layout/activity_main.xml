@@ -23,28 +23,11 @@
         android:layout_below="@id/balllist"
         android:text=" Play with a friend" />
 
-     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/checkBox"
-        android:text="IP Address" />
-    
-    <EditText
-        android:id="@+id/ip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/checkBox"
-        android:layout_toRightOf="@id/textView"
-        android:ems="12" >
-        <requestFocus />
-    </EditText>
-
     <Button
         android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ip"
+        android:layout_below="@id/checkBox"
         android:layout_centerInParent="true"
         android:text="Play" />
 

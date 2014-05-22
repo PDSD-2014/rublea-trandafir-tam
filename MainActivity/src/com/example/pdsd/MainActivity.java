@@ -1,4 +1,3 @@
-//rublea-trandafir-tam
 package com.example.pdsd;
 
 import java.net.Inet4Address;
@@ -28,7 +27,6 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 
 	private ListView listview; 
 	private CheckBox playWithFriend;
-	private EditText IPAddress;
 	private Button play;
 	private int football = 0;
 	private int basketbal = 0;
@@ -38,6 +36,8 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+        Intent inetnt=new Intent(this,ServiceServer.class);
+        startService(inetnt);
 		listview = (ListView)findViewById(R.id.balllist);
 		ArrayList<String> ballNames = new ArrayList<String>();
 		ballNames.add(getString(R.string.basket));
@@ -49,7 +49,6 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 		listview.setOnItemClickListener(this);
 		
 		playWithFriend = (CheckBox)findViewById(R.id.checkBox);
-		IPAddress = (EditText)findViewById(R.id.ip);
 		play = (Button)findViewById(R.id.play);
 		playWithFriend.setOnClickListener(this);
 		play.setOnClickListener(this);
@@ -100,20 +99,8 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 		if(v == play){
 			if((football + voleyball + basketbal) == 1){
 				if(playWithFriend.isChecked()){
-					try {
-						if(IPAddress == null){
-							Toast.makeText(this,"Introduceti Adresa IP", Toast.LENGTH_SHORT).show();
-							return;
-						}
-						if(!InetAddressUtils.isIPv4Address(IPAddress.getText().toString())){
-							Toast.makeText(this,"Adresa IP Invalida", Toast.LENGTH_SHORT).show();
-							return;
-						}
-						InetAddress address = InetAddress.getByName(IPAddress.getText().toString());
-					} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
-						Toast.makeText(this,e.toString(), Toast.LENGTH_SHORT).show();
-					}
+					Intent intent = new Intent(this,ClientActivity.class);
+					startActivity(intent);
 					
 				}
 			}
