@@ -18,6 +18,7 @@ package com.example.pdsd;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 
 public class OpenGLES20Activity extends Activity {
 
@@ -27,6 +28,8 @@ public class OpenGLES20Activity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        
+        Log.i("tag-ex", "creating open gl activity");
         // Create a GLSurfaceView instance and set it
         // as the ContentView for this Activity
         mGLView = new MyGLSurfaceView(this);

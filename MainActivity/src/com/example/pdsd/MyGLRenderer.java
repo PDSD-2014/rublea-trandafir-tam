@@ -83,11 +83,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
         Matrix.setIdentityM(mTranslationMatrix, 0);
-        Matrix.translateM(mTranslationMatrix, 0, -dx/1000, -dy/1000, 0);
+        Matrix.translateM(mTranslationMatrix, 0, dx/9, -dy/9, 0);
         //mTranslationMatrix[3] += dx /30; 
         //mTranslationMatrix[7] += dy /30;
         // Draw square
-        //mCircle.draw(mMVPMatrix);
+        mCircle.draw(mMVPMatrix);
 
         // Create a rotation for the triangle
  

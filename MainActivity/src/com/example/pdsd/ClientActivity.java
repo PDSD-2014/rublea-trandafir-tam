@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -101,6 +102,7 @@ public class ClientActivity extends Activity {
 			}finally{
 				if(socket != null){
 					try {
+						Log.i("tag-ex", "closing socket");
 						socket.close();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -115,6 +117,7 @@ public class ClientActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			textResponse.setText(response);
 			if(!response.contains("UnknownHostException") && !response.contains("IOException")){
+				Log.i("tag-ex", "starting open gl activity");
 				Intent intent = new Intent(ClientActivity.this,OpenGLES20Activity.class);
 				startActivity(intent);
 			}

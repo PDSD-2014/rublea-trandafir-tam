@@ -151,6 +151,7 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 
 		@Override
 		public void run() {
+			Log.i("tag-ex", "starting thread");
 			try {
 				serverSocket = new ServerSocket(SocketServerPORT);
 				//Toast.makeText(ServiceServer.this, "I'm waiting here: "
@@ -158,6 +159,7 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 					
 
 				while (true) {
+					Log.i("tag-ex", "starting socket");
 					Socket socket = serverSocket.accept();
 					count++;
 					message += "#" + count + " from " + socket.getInetAddress()
@@ -167,6 +169,7 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 						
 						@Override
 						public void run() {
+							Log.i("tag-ex", "starting open gl activity");
 							// TODO Auto-generated method stub
 							Intent intent = new Intent (MainActivity.this, OpenGLES20Activity.class);
 					        startActivity(intent);
@@ -179,7 +182,7 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Log.i("MyActivity", e.getLocalizedMessage());
 				e.printStackTrace();
 			}
 		}
