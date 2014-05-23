@@ -1,14 +1,23 @@
 package com.example.pdsd;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import org.apache.http.conn.util.InetAddressUtils;
-
 import android.location.Address;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
@@ -31,13 +40,15 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 	private int football = 0;
 	private int basketbal = 0;
 	private int voleyball = 0;
+	String message = "";
+	ServerSocket serverSocket;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-        Intent inetnt=new Intent(this,ServiceServer.class);
-        startService(inetnt);
+        //Intent inetnt=new Intent(this,ServiceServer.class);
+        //startService(inetnt);
 		listview = (ListView)findViewById(R.id.balllist);
 		ArrayList<String> ballNames = new ArrayList<String>();
 		ballNames.add(getString(R.string.basket));
@@ -53,8 +64,25 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 		playWithFriend.setOnClickListener(this);
 		play.setOnClickListener(this);
 		
+		Thread socketServerThread = new Thread(new SocketServerThread());
+		socketServerThread.start();
+		
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		if (serverSocket != null) {
+			try {
+				serverSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		//Toast.makeText(this, "Service Destroy", 300);
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -112,5 +140,115 @@ public class MainActivity extends Activity implements OnItemClickListener,OnClic
 				Toast.makeText(this, "Check only one ball option",Toast.LENGTH_SHORT ).show();
 			}
 		}
+	}
+	
+	
+	
+	private class SocketServerThread extends Thread {
+
+		static final int SocketServerPORT = 8080;
+		int count = 0;
+
+		@Override
+		public void run() {
+			try {
+				serverSocket = new ServerSocket(SocketServerPORT);
+				//Toast.makeText(ServiceServer.this, "I'm waiting here: "
+				//				+ serverSocket.getLocalPort(), Toast.LENGTH_SHORT).show();
+					
+
+				while (true) {
+					Socket socket = serverSocket.accept();
+					count++;
+					message += "#" + count + " from " + socket.getInetAddress()
+							+ ":" + socket.getPort() + "\n";
+					//Toast.makeText(ServiceServer.this,message, Toast.LENGTH_SHORT).show();
+					runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							Intent intent = new Intent (MainActivity.this, OpenGLES20Activity.class);
+					        startActivity(intent);
+						}
+					});
+			        
+					SocketServerReplyThread socketServerReplyThread = new SocketServerReplyThread(
+							socket, count);
+					socketServerReplyThread.run();
+
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+	private class SocketServerReplyThread extends Thread {
+
+		private Socket hostThreadSocket;
+		int cnt;
+
+		SocketServerReplyThread(Socket socket, int c) {
+			hostThreadSocket = socket;
+			cnt = c;
+		}
+
+		@Override
+		public void run() {
+			OutputStream outputStream;
+			String msgReply = "Hello from Android, you are #" + cnt;
+
+			try {
+				outputStream = hostThreadSocket.getOutputStream();
+	            PrintStream printStream = new PrintStream(outputStream);
+	            printStream.print(msgReply);
+	            printStream.close();
+
+				message += "replayed: " + msgReply + "\n";
+				//Toast.makeText(ServiceServer.this,message, Toast.LENGTH_SHORT).show();
+			
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				message += "Something wrong! " + e.toString() + "\n";
+			}
+
+			
+		}
+
+	}
+
+	private String getIpAddress() {
+		String ip = "";
+		try {
+			Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
+					.getNetworkInterfaces();
+			while (enumNetworkInterfaces.hasMoreElements()) {
+				NetworkInterface networkInterface = enumNetworkInterfaces
+						.nextElement();
+				Enumeration<InetAddress> enumInetAddress = networkInterface
+						.getInetAddresses();
+				while (enumInetAddress.hasMoreElements()) {
+					InetAddress inetAddress = enumInetAddress.nextElement();
+
+					if (inetAddress.isSiteLocalAddress()) {
+						ip += "SiteLocalAddress: " 
+								+ inetAddress.getHostAddress() + "\n";
+					}
+					
+				}
+
+			}
+
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ip += "Something Wrong! " + e.toString() + "\n";
+		}
+
+		return ip;
 	}
 }

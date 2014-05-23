@@ -114,8 +114,10 @@ public class ClientActivity extends Activity {
 		@Override
 		protected void onPostExecute(Void result) {
 			textResponse.setText(response);
-            Intent intent = new Intent(ClientActivity.this,OpenGLES20Activity.class);
-            startActivity(intent);
+			if(!response.contains("UnknownHostException") && !response.contains("IOException")){
+				Intent intent = new Intent(ClientActivity.this,OpenGLES20Activity.class);
+				startActivity(intent);
+			}
 			super.onPostExecute(result);
 		}
 		
